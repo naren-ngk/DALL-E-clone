@@ -36,7 +36,30 @@ function CreatePost() {
         }
     }
 
-    const handleSubmit = () => { }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (form.prompt && form.photo) {
+            setLoading(true);
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(form)
+                })
+                await response.json();
+                navigate('/');
+
+            } catch (error) {
+                alert(error);
+            } finally {
+                setLoading(false);
+            }
+        } else {
+            alert('Please enter a prompt!');
+        }
+    }
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -66,8 +89,8 @@ function CreatePost() {
                     {form.photo ? (
                         <img src={form.photo} alt={form.prompt} className='w-full h-full object-contain' />
                     ) : (
-                        <img src={preview} alt='preview' className='w-full h-full object-contain opacity-40' />
-                    )}
+                            <img src={preview} alt='preview' className='w-full h-full object-contain opacity-40' />
+                        )}
 
                     {generatingImg && (
                         <div className='absolute inset-0 z-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] rounded-lg'>
